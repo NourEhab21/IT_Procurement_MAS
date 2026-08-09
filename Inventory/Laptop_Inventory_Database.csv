@@ -1,0 +1,13 @@
+PRODUCT_ID,CATEGORY_NAME,BRAND,PRODUCT_NAME,RAM,SSD,DISPLAY,PROCESSOR,QUANTITY,WAREHOUSE_NAME,LIST_PRICE_USD
+LAP001,Laptop,Dell,Dell Laptop,16 GB,512 GB SSD,15.6,Intel i5,3,Warehouse A,800
+LAP002,Laptop,Dell,Dell Gaming Laptop,32 GB,1 TB SSD,15.6,Intel i7,0,Warehouse A,1200
+LAP003,Laptop,HP,HP Laptop,8 GB,256 GB SSD,14.0,Intel i5,2,Warehouse B,600
+LAP004,Laptop,HP,HP Business Laptop,16 GB,512 GB SSD,15.6,Intel i5,1,Warehouse B,900
+LAP005,Laptop,HP,HP Gaming Laptop,32 GB,1 TB SSD,15.6,Intel i7,0,Warehouse B,1300
+LAP006,Laptop,Lenovo,Lenovo Laptop,8 GB,256 GB SSD,14.0,AMD Ryzen 5,0,Warehouse A,650
+LAP007,Laptop,Lenovo,Lenovo ThinkPad,16 GB,512 GB SSD,14.0,Intel i7,0,Warehouse A,1100
+LAP008,Laptop,Apple,Apple MacBook,8 GB,256 GB SSD,13.3,Apple M1,0,Warehouse C,1000
+LAP009,Laptop,Apple,Apple MacBook Pro,16 GB,512 GB SSD,14.0,Apple M2,0,Warehouse C,1500
+LAP010,Laptop,Acer,Acer Laptop,8 GB,256 GB SSD,15.6,Intel i5,5,Warehouse A,550
+LAP011,Laptop,Acer,Acer Gaming Laptop,16 GB,512 GB SSD,15.6,Intel i7,0,Warehouse A,1000
+LAP012,Laptop,Microsoft,Microsoft Surface,16 GB,512 GB SSD,13.0,Intel i5,0,Warehouse C,1200

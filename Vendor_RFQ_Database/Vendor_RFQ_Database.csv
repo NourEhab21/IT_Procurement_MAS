@@ -1,0 +1,18 @@
+Vendor_ID,Vendor_Name,Item_Category,Item_Name,Unit_Price_USD,Delivery_Days,Warranty_Years,Order_Accuracy_Pct,Vendor_Rating,RFQ_Available
+V001,Supplier A,Laptop,Dell Laptop,800,3,2,98,4.5,Yes
+V002,Supplier B,Laptop,HP Laptop,780,5,2,95,4,Yes
+V003,Supplier C,Laptop,Lenovo Laptop,750,7,1,92,3.5,Yes
+V004,Supplier D,Laptop,Apple MacBook,1200,2,3,99,5,Yes
+V005,Supplier E,Laptop,Acer Laptop,650,10,1,90,3,Yes
+V001,Supplier A,Desktop,Dell Desktop,1200,5,2,98,4.5,Yes
+V002,Supplier B,Desktop,HP Desktop,1100,7,2,95,4,Yes
+V003,Supplier C,Desktop,Lenovo Desktop,1050,6,2,92,3.5,Yes
+V004,Supplier D,Desktop,Apple iMac,1800,3,3,99,5,No
+V005,Supplier E,Desktop,Acer Desktop,950,8,1,90,3,Yes
+V001,Supplier A,Software,Microsoft Office,150,1,1,98,4.5,Yes
+V002,Supplier B,Software,Adobe Creative,600,1,1,95,4,Yes
+V003,Supplier C,Software,AutoCAD,2000,2,1,92,3.5,Yes
+V004,Supplier D,Software,Zoom License,200,1,1,99,5,Yes
+V005,Supplier E,Software,Slack License,180,1,1,90,3,Yes
+V006,Supplier F,Laptop,Lenovo Laptop,700,5,2,97,4.5,Yes
+V007,Supplier G,Laptop,Dell Laptop,850,1,3,99,4.8,Yes
