@@ -4,6 +4,7 @@ import time
 import json
 import pandas as pd
 from typing import Dict, List, Tuple, Any
+from unittest.mock import patch
 
 # ==========================================
 # 1. DATABASE LOADER & PATH RESOLVER
@@ -415,7 +416,9 @@ def run_workflow_claude(
     df_rfq: pd.DataFrame,
     df_laptop: pd.DataFrame,
     anthropic_client,
-    model_name: str = "Claude 3.5 Sonnet"
+    model_name: str = "claude-sonnet-4-6",
+    cfo_input: str = None,
+    ceo_input: str = None
 ) -> Tuple[List[Dict[str, str]], str]:
     """
     Executes the 13-step IT procurement workflow using ONLY Anthropic Claude.
@@ -702,7 +705,9 @@ def run_workflow_claude(
     for step in history:
         print(f"[{step['role']}]: {step['content']}\n" + "-"*40)
         
-    human_cfo_input = input("\nHuman CFO, type 'APPROVE' to proceed or 'REJECT' to stop: ").strip().upper()
+    human_cfo_input = str(cfo_input).strip().upper() if cfo_input is not None else "APPROVE"
+    print(f"Human CFO Decision: {human_cfo_input}")
+
     history.append({"role": "Human CFO", "agent": "Human CFO", "content": f"Decision: {human_cfo_input}"})
     
     if human_cfo_input != "APPROVE":
@@ -727,7 +732,9 @@ def run_workflow_claude(
     print("#"*60)
     print(f"CEO report:\n{ceo_response}\n")
     
-    human_ceo_input = input("Human CEO, type 'APPROVE' to authorize or 'REJECT' to deny: ").strip().upper()
+    human_ceo_input = str(ceo_input).strip().upper() if ceo_input is not None else "APPROVE"
+    print(f"Human CEO Final Decision: {human_ceo_input}")
+
     history.append({"role": "Human CEO", "agent": "Human CEO", "content": f"Final Decision: {human_ceo_input}"})
     
     status = "PROCUREMENT APPROVED SUCCESSFULLY" if human_ceo_input == "APPROVE" else "PROCUREMENT DENIED BY HUMAN CEO"
@@ -744,7 +751,9 @@ def run_workflow_openai(
     df_rfq: pd.DataFrame,
     df_laptop: pd.DataFrame,
     openai_client,
-    model_name: str = "gpt-4o"
+    model_name: str = "gpt-4o",
+    cfo_input: str = None,
+    ceo_input: str = None
 ) -> Tuple[List[Dict[str, str]], str]:
     """
     Executes the 13-step IT procurement workflow using ONLY OpenAI GPT-4o.
@@ -1032,7 +1041,9 @@ def run_workflow_openai(
     for step in history:
         print(f"[{step['role']}]: {step['content']}\n" + "-"*40)
         
-    human_cfo_input = input("\nHuman CFO, type 'APPROVE' to proceed or 'REJECT' to stop: ").strip().upper()
+    human_cfo_input = str(cfo_input).strip().upper() if cfo_input is not None else "APPROVE"
+    print(f"Human CFO Decision: {human_cfo_input}")
+
     history.append({"role": "Human CFO", "agent": "Human CFO", "content": f"Decision: {human_cfo_input}"})
     
     if human_cfo_input != "APPROVE":
@@ -1057,7 +1068,9 @@ def run_workflow_openai(
     print("#"*60)
     print(f"CEO report:\n{ceo_response}\n")
     
-    human_ceo_input = input("Human CEO, type 'APPROVE' to authorize or 'REJECT' to deny: ").strip().upper()
+    human_ceo_input = str(ceo_input).strip().upper() if ceo_input is not None else "APPROVE"
+    print(f"Human CEO Final Decision: {human_ceo_input}")
+
     history.append({"role": "Human CEO", "agent": "Human CEO", "content": f"Final Decision: {human_ceo_input}"})
     
     status = "PROCUREMENT APPROVED SUCCESSFULLY" if human_ceo_input == "APPROVE" else "PROCUREMENT DENIED BY HUMAN CEO"
@@ -1065,17 +1078,63 @@ def run_workflow_openai(
     return history, status
 
 # ==========================================
-# 4. NOTEBOOK INITIALIZATION / ENTRYPOINT
+# 4. UTILITIES & BENCHMARK SUITE
 # ==========================================
+
+def save_results(
+    scenario_num: int,
+    run_num: int,
+    user_request: str,
+    outcome_claude: str,
+    time_claude: float,
+    outcome_openai: str,
+    time_openai: float,
+    history_claude: List[Dict[str, str]],
+    history_openai: List[Dict[str, str]]
+):
+    """
+    Saves full conversation history to S{scenario_num}_Run{run_num}.txt
+    and appends summary results to all_results.csv.
+    """
+    txt_filename = f"S{scenario_num}_Run{run_num}.txt"
+    with open(txt_filename, "w", encoding="utf-8") as f:
+        f.write(f"=== SCENARIO {scenario_num} - RUN {run_num} ===\n")
+        f.write(f"Request: {user_request}\n\n")
+        f.write("="*60 + "\n")
+        f.write("ANTHROPIC CLAUDE WORKFLOW HISTORY\n")
+        f.write("="*60 + "\n")
+        for entry in history_claude:
+            f.write(f"[{entry.get('role', 'Agent')}]: {entry.get('content', '')}\n")
+            f.write("-" * 40 + "\n")
+        f.write(f"\nClaude Outcome: {outcome_claude} (Time: {time_claude:.2f}s)\n\n")
+        
+        f.write("="*60 + "\n")
+        f.write("OPENAI GPT-4O WORKFLOW HISTORY\n")
+        f.write("="*60 + "\n")
+        for entry in history_openai:
+            f.write(f"[{entry.get('role', 'Agent')}]: {entry.get('content', '')}\n")
+            f.write("-" * 40 + "\n")
+        f.write(f"\nOpenAI Outcome: {outcome_openai} (Time: {time_openai:.2f}s)\n")
+
+    csv_filename = "all_results.csv"
+    file_exists = os.path.exists(csv_filename)
+    
+    df_row = pd.DataFrame([{
+        'Scenario': f"S{scenario_num}",
+        'Run': run_num,
+        'Request': user_request,
+        'Claude_Outcome': outcome_claude,
+        'Claude_Time': round(time_claude, 2),
+        'OpenAI_Outcome': outcome_openai,
+        'OpenAI_Time': round(time_openai, 2)
+    }])
+    
+    df_row.to_csv(csv_filename, mode='a', index=False, header=not file_exists)
+    print(f"✅ Saved results for S{scenario_num} Run {run_num} -> {txt_filename} & {csv_filename}")
 
 if __name__ == "__main__":
     df_inventory, df_rfq, df_laptop = load_databases()
     
-    print("=== STEP 1: ENTER YOUR IT PROCUREMENT REQUEST TICKET ===")
-    user_request_input = input("Type your IT procurement request (or press Enter for default): ").strip()
-    
-    if not user_request_input:
-        user_request_input = "I need to procure 2 HP Business Laptops for university laboratory experiments. Requirements: at least 16GB RAM, 512GB SSD, Intel i5 processor, 15.6 inch screen size. Budget is $1000."
-        print(f"Using default request: {user_request_input}")
-    else:
-        print(f"Ticket request received: {user_request_input}")
+    print("=== STEP 1: IT PROCUREMENT REQUEST TICKET ===")
+    user_request_input = "I need to procure 2 HP Business Laptops for university laboratory experiments. Requirements: at least 16GB RAM, 512GB SSD, Intel i5 processor, 15.6 inch screen size. Budget is $1000."
+    print(f"Ticket request: {user_request_input}")
