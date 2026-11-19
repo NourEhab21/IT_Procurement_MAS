@@ -415,7 +415,7 @@ def run_workflow_claude(
     df_rfq: pd.DataFrame,
     df_laptop: pd.DataFrame,
     anthropic_client,
-    model_name: str = "claude-sonnet-4-6"
+    model_name: str = "Claude 3.5 Sonnet"
 ) -> Tuple[List[Dict[str, str]], str]:
     """
     Executes the 13-step IT procurement workflow using ONLY Anthropic Claude.
